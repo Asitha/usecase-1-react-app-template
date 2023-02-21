@@ -1,0 +1,8 @@
+[package]
+org = "asitha"
+name = "customer_backend"
+version = "0.1.0"
+distribution = "2201.1.1"
+
+[build-options]
+observabilityIncluded = true
