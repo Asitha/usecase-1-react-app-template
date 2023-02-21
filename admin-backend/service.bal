@@ -32,7 +32,6 @@ service / on new http:Listener(9090) {
             ssl: {
                 mode: mysql:SSL_REQUIRED
             }
-
         };
 
         sql:ConnectionPool poolOptions = {
@@ -66,7 +65,7 @@ service / on new http:Listener(9090) {
 
     resource function post products(@http:Payload Product catalogItem) returns http:Created|error {
         sql:ParameterizedQuery query =
-        `INSERT INTO products ('title', 'description', 'includes', intendedFor', 'color', 'material', 'price')
+        `INSERT INTO products (title, description, includes, intendedFor, color, material, price)
          VALUES (
             ${catalogItem.title},
             ${catalogItem.description},
