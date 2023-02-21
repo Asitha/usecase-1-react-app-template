@@ -84,7 +84,7 @@ service / on new http:Listener(9090) {
         }
     }
 
-    resource function patch products/[string id](@http:Payload Product catalogItem) returns http:Accepted|error {
+    resource function patch products/[string id](@http:Payload Product catalogItem) returns http:Ok|error {
         sql:ParameterizedQuery query =
         `UPDATE products SET
             title = ${catalogItem.title},
@@ -100,7 +100,7 @@ service / on new http:Listener(9090) {
         if (result is sql:Error) {
             return result;
         } else {
-            return http:ACCEPTED;
+            return http:OK;
         }
     }
 }
