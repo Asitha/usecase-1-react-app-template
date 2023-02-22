@@ -14,7 +14,7 @@ service /graphql on new graphql:Listener(9091) {
             if (payload is json[]) {
                 Product[] products = [];
                 foreach json product in payload {
-                    Product|error productEntry = product.cloneWithType();
+                    Product|error productEntry = product.cloneWithType(Product);
                     if (productEntry is error) {
                         return error("Error while parsing response", productEntry);
                     }
@@ -32,7 +32,7 @@ service /graphql on new graphql:Listener(9091) {
         if (response is http:Response) {
             json|http:ClientError payload = response.getJsonPayload();
             if (payload is json) {
-                Product|error productEntry = payload.cloneWithType();
+                Product|error productEntry = payload.cloneWithType(Product);
                 if (productEntry is error) {
                     return error("Error while parsing response", productEntry);
                 }
