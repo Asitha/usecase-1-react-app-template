@@ -5,7 +5,7 @@ configurable string restApiUrl = ?;
 http:Client clientEp = check new (restApiUrl);
 # A service representing a network-accessible API
 # bound to port `9090`.
-service /graphql on new graphql:Listener(9090) {
+service /graphql on new graphql:Listener(9091) {
 
     resource function get all() returns ProductData[]|error {
         http:Response|error response = clientEp->get("/products");
@@ -43,6 +43,6 @@ service /graphql on new graphql:Listener(9090) {
                 return error("Error while parsing response", payload.cloneReadOnly());
             }
         }
-        return error("Error while parsing response", response);
+        return error(string `Error while parsing response ${response.message()}`, response);
     }
 }
