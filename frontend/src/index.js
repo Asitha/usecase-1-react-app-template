@@ -1,17 +1,31 @@
-import React  from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { AuthProvider } from "@asgardeo/auth-react";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { default as config } from "./config.json";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <>
-    <script src="https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js" crossOrigin="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js" crossOrigin="true"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-bootstrap@next/dist/react-bootstrap.min.js" crossOrigin="true"></script>
-    <App />
+    <script
+      src="https://cdn.jsdelivr.net/npm/react/umd/react.production.min.js"
+      crossOrigin="true"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.production.min.js"
+      crossOrigin="true"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/react-bootstrap@next/dist/react-bootstrap.min.js"
+      crossOrigin="true"
+    ></script>
+    <AuthProvider config={config}>
+      <App />
+    </AuthProvider>
   </>
 );
 
