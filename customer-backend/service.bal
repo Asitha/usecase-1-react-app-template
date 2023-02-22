@@ -8,39 +8,12 @@ http:Client clientEp = check new (restApiUrl);
 service /graphql on new graphql:Listener(9091) {
 
     resource function get productList() returns Product[]|error {
-        http:Response|error response = check clientEp->get("/products");
-        if (response is http:Response) {
-            json|http:ClientError payload = response.getJsonPayload();
-            if (payload is json[]) {
-                Product[] products = [];
-                foreach json product in payload {
-                    Product|error productEntry = product.cloneWithType(Product);
-                    if (productEntry is error) {
-                        return error("Error while parsing response", productEntry);
-                    }
-                    products.push(productEntry);
-                }
-            } else {
-                return error("Error while parsing response", payload.cloneReadOnly());
-            }
-        }
-        return error("Error while parsing response", response);
+        Product[] response = check clientEp->get("/products");
+        return response;
     }
 
     resource function get product(string id) returns Product|error {
-        http:Response|error response = clientEp->get("/products/" + id);
-        if (response is http:Response) {
-            json|http:ClientError payload = response.getJsonPayload();
-            if (payload is json) {
-                Product|error productEntry = payload.cloneWithType(Product);
-                if (productEntry is error) {
-                    return error("Error while parsing response", productEntry);
-                }
-                return productEntry;
-            } else {
-                return error("Error while parsing response", payload.cloneReadOnly());
-            }
-        }
-        return error(string `Error while parsing response ${response.message()}`, response);
+        Product response = check clientEp->get("/products/" + id);
+        return response;
     }
 }
