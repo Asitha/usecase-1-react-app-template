@@ -5,7 +5,7 @@ import './App.scss';
 import { Nav, Navbar, Container }  from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 
 import Catalog from './components/Catalog/Catalog.js';
 import MyCart from './components/MyCart/Cart.js';
@@ -46,9 +46,9 @@ const PetStoreNav = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/">Catalog</Nav.Link>
-            <Nav.Link href="/mycart">My Cart</Nav.Link>
-            <Nav.Link href="/admin">Admin</Nav.Link>
+          <Link to="/" className="nav-link">Catalog</Link>
+            <Link to="/mycart" className="nav-link">My Cart</Link>
+            <Link to="/admin" className="nav-link">Admin</Link>
           </Nav>
         </Navbar.Collapse>
         <RightLoginSignupMenu />
@@ -65,12 +65,18 @@ const App = () => {
   }, []);
   return (
     <>
-    <PetStoreNav />
-    <BrowserRouter>
+      <BrowserRouter>
+      <PetStoreNav />
       <Switch>
-        <Route path="/" component={Catalog} />
-        <Route path="/mycart" component={MyCart} />
-        <Route path="/admin" component={Admin} />
+      <Route exact path="/">
+          <Catalog />
+        </Route>
+        <Route path="/mycart">
+          <MyCart />
+        </Route>
+        <Route path="/admin">
+          <Admin />
+        </Route>
       </Switch>
     </BrowserRouter>
     </>
