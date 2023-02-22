@@ -1,25 +1,24 @@
 import ballerina/http;
 import ballerina/graphql;
 
-configurable string restApiUrl = ?;
+configurable string restApiUrl = "http://localhost:9090/";
 http:Client clientEp = check new (restApiUrl);
 # A service representing a network-accessible API
 # bound to port `9090`.
 service /graphql on new graphql:Listener(9091) {
 
-    resource function get all() returns ProductData[]|error {
-        http:Response|error response = clientEp->get("/products");
+    resource function get productList() returns Product[]|error {
+        http:Response|error response = check clientEp->get("/products");
         if (response is http:Response) {
             json|http:ClientError payload = response.getJsonPayload();
             if (payload is json[]) {
-                ProductData[] products = [];
+                Product[] products = [];
                 foreach json product in payload {
-                    ProductEntry|error productEntry = product.cloneWithType();
+                    Product|error productEntry = product.cloneWithType();
                     if (productEntry is error) {
                         return error("Error while parsing response", productEntry);
                     }
-                    ProductData productData = new (productEntry);
-                    products.push(productData);
+                    products.push(productEntry);
                 }
             } else {
                 return error("Error while parsing response", payload.cloneReadOnly());
@@ -28,17 +27,16 @@ service /graphql on new graphql:Listener(9091) {
         return error("Error while parsing response", response);
     }
 
-    resource function get filter(string id) returns ProductData|error {
+    resource function get product(string id) returns Product|error {
         http:Response|error response = clientEp->get("/products/" + id);
         if (response is http:Response) {
             json|http:ClientError payload = response.getJsonPayload();
             if (payload is json) {
-                ProductEntry|error productEntry = payload.cloneWithType();
+                Product|error productEntry = payload.cloneWithType();
                 if (productEntry is error) {
                     return error("Error while parsing response", productEntry);
                 }
-                ProductData productData = new (productEntry);
-                return productData;
+                return productEntry;
             } else {
                 return error("Error while parsing response", payload.cloneReadOnly());
             }
