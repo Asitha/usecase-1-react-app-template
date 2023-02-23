@@ -16,4 +16,10 @@ service /graphql on new graphql:Listener(9091) {
         Product response = check clientEp->get("/products/" + id);
         return response;
     }
+
+    resource function get cart(string customerId) returns CartItem[]|error {
+        CartItem[] response = check clientEp->get("/cart/" + customerId);
+        return response;
+    }
+
 }

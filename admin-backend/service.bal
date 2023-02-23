@@ -94,17 +94,17 @@ service /petstore on new http:Listener(9090) {
         }
     }
 
-    resource function get cart/[string customerid]() returns Cart[]|error {
+    resource function get cart/[string customerid]() returns CartItem[]|error {
         return self.getCart(customerid);
     }
 
     resource function put cart/[string customerid]/items/[string productid](
-            @http:Payload record {int quantity;} payload) returns Cart|error {
+            @http:Payload record {int quantity;} payload) returns CartItem|error {
 
         return self.getCartItem(customerid, productid);
     }
 
-    resource function delete cart/[string customerid]/items/[string productid]() returns Cart[]|error? {
+    resource function delete cart/[string customerid]/items/[string productid]() returns CartItem[]|error? {
         sql:ParameterizedQuery query = `DELETE FROM cart WHERE customerid = ${customerid} AND productid = ${productid}`;
 
         sql:ExecutionResult|sql:Error result = self.db->execute(query);
@@ -114,11 +114,11 @@ service /petstore on new http:Listener(9090) {
         return self.getCart(customerid);
     }
 
-    function getCart(string customerId) returns Cart[]|error {
+    function getCart(string customerId) returns CartItem[]|error {
         sql:ParameterizedQuery query = `SELECT * FROM cart WHERE customerid = ${customerId}`;
 
-        stream<Cart, sql:Error?> resultStream = self.db->query(query);
-        Cart[]|sql:Error? cart = from var result in resultStream
+        stream<CartItem, sql:Error?> resultStream = self.db->query(query);
+        CartItem[]|sql:Error? cart = from var result in resultStream
             select result;
         if (cart is sql:Error?) {
             return error sql:ApplicationError("Error in retrieving cart");
@@ -127,10 +127,10 @@ service /petstore on new http:Listener(9090) {
         }
     }
 
-    function getCartItem(string customerId, string productId) returns Cart|error {
+    function getCartItem(string customerId, string productId) returns CartItem|error {
         sql:ParameterizedQuery query = `SELECT * FROM cart WHERE customerid = ${customerId} AND productid = ${productId}`;
 
-        Cart|sql:Error response = self.db->queryRow(query);
+        CartItem|sql:Error response = self.db->queryRow(query);
 
         if (response is sql:Error?) {
             return error sql:ApplicationError("Error in retrieving cart");

@@ -9,10 +9,8 @@ type Product record {
     float price;
 };
 
-type Cart record {
+type CartItem record {
     string customerId;
     string productId;
     int quantity;
 };
-
-
