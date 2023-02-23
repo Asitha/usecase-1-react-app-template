@@ -104,6 +104,16 @@ service /petstore on new http:Listener(9090) {
         return self.getCartItem(customerid, productid);
     }
 
+    resource function post cart/[string customerId](@http:Payload record {string productId; int qty;} payload) returns CartItem|error {
+        sql:ParameterizedQuery query = `INSERT INTO cart (customerid, productid, quantity) VALUES (${customerId}, ${payload.productId}, ${payload.qty})`;
+
+        sql:ExecutionResult|sql:Error result = self.db->execute(query);
+        if (result is sql:Error) {
+            return error sql:ApplicationError("Error in adding item to cart");
+        }
+        return self.getCartItem(customerId, payload.productId);
+    }
+
     resource function delete cart/[string customerid]/items/[string productid]() returns CartItem[]|error? {
         sql:ParameterizedQuery query = `DELETE FROM cart WHERE customerid = ${customerid} AND productid = ${productid}`;
 
