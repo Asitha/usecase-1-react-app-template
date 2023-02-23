@@ -1,31 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
+
+import { default as config } from "../../config.json";
+import { fetchGQLData } from "../../gql";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp as regThumbsUp } from "@fortawesome/free-regular-svg-icons";
-import { faThumbsUp as solidThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "@asgardeo/auth-react";
-// import PetStoreNav from '../../App.js';
 
 // Component to render the item list
 const PetItemList = () => {
   const [productList, setProductList] = useState([]);
-  const { httpRequest } = useAuthContext();
+  const { getAccessToken } = useAuthContext();
 
   useEffect(() => {
-    const requestConfig = {
-      headers: {
-        accept: "application/json",
-      },
-      method: "GET",
-      url: "http://localhost:9000/products",
-    };
-    httpRequest(requestConfig).then((response) => {
-      setProductList(response.data);
-    }).catch((error) => {
-      console.log(error);
+    getAccessToken().then((token) => {
+      const query =
+        '{"query": "{ productList { id title description includes intendedFor color price } }"}';
+      fetchGQLData(config.graphQlUrl, query, token).then((response) => {
+        setProductList(response.data.data.productList);
+      });
     });
-  }, []);
+  }, [getAccessToken]);
 
   const itemPrice = {
     fontSize: "20px",
@@ -57,7 +52,7 @@ const PetItemList = () => {
                 <br />
               </p>
               <br />
-              <span style={itemPrice}>$ {product.price}</span>{" "}
+              <span style={itemPrice}>$ {product.price.toFixed(2)}</span>{" "}
               <Button variant="danger">Add to cart</Button>
               <br />
               <br />

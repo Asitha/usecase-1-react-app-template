@@ -1,0 +1,10 @@
+{
+    "clientID": "dHzEq4MFMbkLhbh0dVuhKRSBqg4a",
+    "baseUrl": "https://api.asgardeo.io/t/asithan",
+    "signInRedirectURL": "http://localhost:3000",
+    "signOutRedirectURL": "http://localhost:3000",
+    "scope": ["profile", "openid"],
+    "resourceServerURLs": ["http://localhost:9000"],
+    "restApiUrl": "http://localhost:9000/petstore/products",
+    "graphQlUrl": "http://localhost:9000/graphql"
+}
