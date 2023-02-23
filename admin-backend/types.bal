@@ -1,4 +1,4 @@
-type Product record {
+type Product record {|
     string id;
     string title;
     string description;
@@ -7,12 +7,10 @@ type Product record {
     string color;
     string material;
     float price;
-};
+|};
 
 type Cart record {
     string customerId;
     string productId;
     int quantity;
 };
-
-

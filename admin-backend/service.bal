@@ -3,17 +3,6 @@ import ballerina/sql;
 import ballerinax/mysql;
 import ballerinax/mysql.driver as _;
 
-type Product record {|
-    string id;
-    string title;
-    string description;
-    string includes;
-    string intendedFor;
-    string color;
-    string material;
-    float price;
-|};
-
 configurable string host = ?;
 configurable string user = ?;
 configurable string password = ?;
@@ -22,7 +11,7 @@ configurable int port = ?;
 
 # A service representing a network-accessible API
 # bound to port `9090`.
-service / on new http:Listener(9090) {
+service /petstore on new http:Listener(9090) {
     private final mysql:Client db;
 
     function init() returns error? {
@@ -55,7 +44,8 @@ service / on new http:Listener(9090) {
 
     resource function get products() returns Product[]|error {
         stream<Product, sql:Error?> resultStream = self.db->query(`SELECT * FROM products`);
-        Product[]|sql:Error? products = from var result in resultStream select result;
+        Product[]|sql:Error? products = from var result in resultStream
+            select result;
         if (products is sql:Error?) {
             return error sql:ApplicationError("Error in retrieving products");
         } else {
@@ -101,6 +91,51 @@ service / on new http:Listener(9090) {
             return result;
         } else {
             return http:OK;
+        }
+    }
+
+    resource function get cart/[string customerid]() returns Cart[]|error {
+        return self.getCart(customerid);
+    }
+
+    resource function put cart/[string customerid]/items/[string productid](
+            @http:Payload record {int quantity;} payload) returns Cart|error {
+
+        return self.getCartItem(customerid, productid);
+    }
+
+    resource function delete cart/[string customerid]/items/[string productid]() returns Cart[]|error? {
+        sql:ParameterizedQuery query = `DELETE FROM cart WHERE customerid = ${customerid} AND productid = ${productid}`;
+
+        sql:ExecutionResult|sql:Error result = self.db->execute(query);
+        if (result is sql:Error) {
+            return result;
+        }
+        return self.getCart(customerid);
+    }
+
+    function getCart(string customerId) returns Cart[]|error {
+        sql:ParameterizedQuery query = `SELECT * FROM cart WHERE customerid = ${customerId}`;
+
+        stream<Cart, sql:Error?> resultStream = self.db->query(query);
+        Cart[]|sql:Error? cart = from var result in resultStream
+            select result;
+        if (cart is sql:Error?) {
+            return error sql:ApplicationError("Error in retrieving cart");
+        } else {
+            return cart;
+        }
+    }
+
+    function getCartItem(string customerId, string productId) returns Cart|error {
+        sql:ParameterizedQuery query = `SELECT * FROM cart WHERE customerid = ${customerId} AND productid = ${productId}`;
+
+        Cart|sql:Error response = self.db->queryRow(query);
+
+        if (response is sql:Error?) {
+            return error sql:ApplicationError("Error in retrieving cart");
+        } else {
+            return response;
         }
     }
 }
