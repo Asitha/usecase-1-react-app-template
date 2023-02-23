@@ -75,43 +75,12 @@ const PetStoreNav = () => {
   );
 };
 
-const SignInPage = () => {
-  const { state, signIn } = useAuthContext();
-
-  useEffect(() => {
-    if (!state.isAuthenticated) {
-      signIn();
-    }
-  }, [state.isAuthenticated, signIn]);
-
-  if (state.isAuthenticated) {
-    return <Redirect to="/" />;
-  }
-  return (
-    <div>
-      <p>loading...</p>
-    </div>
-  );
-};
-
 const SignOutPage = () => {
-  const { state, signOut } = useAuthContext();
-
+  const { signOut } = useAuthContext();
   useEffect(() => {
-    if (state.isAuthenticated) {
-      signOut();
-    }
-  }, [state.isAuthenticated, signOut]);
-
-  if (!state.isAuthenticated) {
-    return <Redirect to="/" />;
-  }
-  
-  return (
-    <div>
-      <p>loading...</p>
-    </div>
-  );
+    signOut();
+  }, []);
+  return <Redirect to="/" />;
 };
 
 // Main app component
@@ -132,9 +101,6 @@ const App = () => {
           </Route>
           <Route path="/admin">
             <Admin />
-          </Route>
-          <Route path="/sign-in">
-            <SignInPage />
           </Route>
           <Route path="/sign-out">
             <SignOutPage />
