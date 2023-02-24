@@ -22,5 +22,6 @@ ENV NODE_ENV production
 # Expose port 3000 for the application
 EXPOSE 3000
 
+USER 10014
 # Use ENTRYPOINT to specify the command to be run when the container starts
 ENTRYPOINT ["npm", "start"]
